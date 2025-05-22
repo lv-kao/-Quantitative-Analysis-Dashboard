@@ -11,4 +11,10 @@
 ## 環境建置
 
 1. 建議使用 Python 3.8 以上版本
-2. 安裝依賴套件
+2. 安裝依賴套件：
+yfinance
+pandas
+numpy
+matplotlib
+seaborn
+riskfolio-lib
