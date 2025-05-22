@@ -1,22 +1,44 @@
-from data_fetch import get_price_data, calculate_technical_indicators
-from portfolio_opt import optimize_portfolio
-from visualize import plot_price_and_ma, plot_sharpe_bar, plot_correlation_heatmap, plot_portfolio_weights
+import yfinance as yf
+import matplotlib.pyplot as plt
+from technical_indicators import moving_average, rsi, macd
 
-tickers = ["AAPL", "GOOG", "TSLA", "MSFT", "AMZN"]
-start_date = "2024-01-01"
-end_date = "2025-05-21"
+def main():
+    # 抓取股票歷史價格
+    ticker = "AAPL"
+    df = yf.download(ticker, start="2023-01-01", end="2024-01-01", auto_adjust=True)
 
-price_df = get_price_data(tickers, start_date, end_date)
+    close = df['Close']
 
-ma20, ma50, daily_returns, annual_return, annual_volatility, sharpe_ratio = calculate_technical_indicators(price_df)
+    # 計算技術指標
+    ma20 = moving_average(close, 20)
+    rsi14 = rsi(close, 14)
+    macd_line, signal_line, hist = macd(close)
 
-for ticker in tickers:
-    plot_price_and_ma(price_df, ma20, ma50, ticker)
+    # 畫收盤價和20日移動平均線
+    plt.figure(figsize=(12,6))
+    plt.plot(close, label='Close Price')
+    plt.plot(ma20, label='MA20')
+    plt.title(f"{ticker} 收盤價與20日移動平均線")
+    plt.legend()
+    plt.show()
 
-plot_sharpe_bar(sharpe_ratio)
+    # 畫RSI 指標
+    plt.figure(figsize=(12,3))
+    plt.plot(rsi14, label='RSI14', color='orange')
+    plt.axhline(70, color='red', linestyle='--')  # 超買
+    plt.axhline(30, color='green', linestyle='--')  # 超賣
+    plt.title(f"{ticker} RSI 指標")
+    plt.legend()
+    plt.show()
 
-plot_correlation_heatmap(daily_returns)
+    # 畫MACD 指標
+    plt.figure(figsize=(12,4))
+    plt.plot(macd_line, label='MACD Line')
+    plt.plot(signal_line, label='Signal Line')
+    plt.bar(hist.index, hist, label='Histogram', color='gray')
+    plt.title(f"{ticker} MACD 指標")
+    plt.legend()
+    plt.show()
 
-weights = optimize_portfolio(daily_returns)
-
-plot_portfolio_weights(weights)
+if __name__ == "__main__":
+    main()
