@@ -1,4 +1,4 @@
-# -Quantitative-Analysis-Dashboard
+# Quantitative-Analysis-Dashboard
 
 這是一個用 Python 實作的技術分析與多因子投資組合優化儀表板，功能包含：
 
